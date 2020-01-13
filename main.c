@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <memory.h>
 #include <time.h>
 
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
 
     for (uint32_t i = 0; i < pt_len; ++i) {
         char *byte_str = &pt_str[i * 3];
-        char is_wildcard = byte_str[0] == '?';
+        bool is_wildcard = byte_str[0] == '?';
         if (is_wildcard) {
             pt_mask &= ~(1 << i);
         } else {
@@ -113,7 +114,7 @@ int main(int argc, char **argv)
 
     for (uintptr_t i = 0; i < len; ++i ) {
 		const uint8_t *scan_buf = (uint8_t *)((uintptr_t)buf + i);
-		char found_pt = 1;
+		bool found_pt = true;
 		for (uintptr_t h = 0; h < pt_len; ++h) {
 			if (!(pt_mask & ((uint64_t)1 << h)))
 				continue;
