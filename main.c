@@ -9,18 +9,24 @@
 // Example usage 1:
 //  ./psc file "AA BB ?? CC"
 // Example output:
-//  Pattern length: 0x4
+//  Pattern length: 4
 //  File size: 0xFEFEFEFE
-//  Found result(0) at 0xDEADBEEF: AA BB C3 CC
+//  Found result[0] at offset 0xdeadbeef
+//
+//  Found 1 match(es) in 0.0000001s.
 //
 
 //
 // Example usage 2:
 //  ./psc file "AA BB ?? CC" 4 (bytes to show)
 // Example output 2:
-//  Pattern length: 0x4
+//  Pattern length: 4
 //  File size: 0xFEFEFEFE
-//  Found result(0) at 0xDEADBEEF: AA BB C3 CC DD FF EE C4
+//  Found result[0] at offset 0xdeadbeef
+//  Bytes:
+//  AA BB C3 CC DD FF EE C4
+//
+//  Found 1 match(es) in 0.0000001s.
 //
 
 int main(int argc, char **argv)
@@ -126,8 +132,7 @@ int main(int argc, char **argv)
 		}
 
 		if (found_pt) {
-            results_found++;
-            printf("Found pattern[%u] at %p\n", results_found, scan_buf);
+            printf("Found pattern[%u] at offset %p\n", results_found++, (void *)i);
             if (bytes_to_show > 0) {
                 puts("Bytes: ");
                 for (uint32_t j = 0; j < bytes_to_show; ++j) {
@@ -142,7 +147,7 @@ int main(int argc, char **argv)
     diff = (double)end - start;
     dtime = diff / CLOCKS_PER_SEC;
 
-    printf("Found %u matches in %fs.\n", results_found, dtime);
+    printf("Found %u match(es) in %fs.\n", results_found, dtime);
 
     free(buf);
     free(pt_buf);
