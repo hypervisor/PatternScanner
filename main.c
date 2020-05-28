@@ -29,8 +29,9 @@
 //  Found 1 match(es) in 0.0000001s.
 //
 
-int main(int argc, char **argv)
-{
+uint8_t hex_char_to_byte(char c);
+
+int main(int argc, char **argv) {
     FILE *fp;               // File pointer
     long len;               // File length (in bytes)
     char *buf, *pt_str;     // Pointer to file buffer & pattern
@@ -67,7 +68,7 @@ int main(int argc, char **argv)
     //
 
     if (argc > 3) {
-        sscanf(argv[3], "%u", &bytes_to_show);
+        bytes_to_show = strtoul(argv[3], NULL, 0);
         bytes_to_show += pt_len;
     } else {
         bytes_to_show = 0;
@@ -88,7 +89,12 @@ int main(int argc, char **argv)
         if (is_wildcard) {
             pt_mask &= ~(1 << i);
         } else {
-            sscanf(byte_str, "%02X", (uint32_t *)&pt_buf[i]);
+            //
+            // Sure we could use some shit like strtoul but since we know bytes are two characters this is faster and easier.
+            //
+
+            pt_buf[i] = 0x10 * hex_char_to_byte(byte_str[0]);
+            pt_buf[i] = 0x01 * hex_char_to_byte(byte_str[1]);
         }
     }
 
@@ -151,6 +157,17 @@ int main(int argc, char **argv)
 
     free(buf);
     free(pt_buf);
+
+    return 0;
+}
+
+uint8_t hex_char_to_byte(char c) {
+    if (c >= '0' && c < ';')
+        return c - '0';
+    if (c >= 'A' && c < 'G')
+        return 10 + c - 'A';
+    if (c >= 'a' && c < 'g')
+        return 10 + c - 'a' ;
 
     return 0;
 }
