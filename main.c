@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
             //
 
             pt_buf[i] = 0x10 * hex_char_to_byte(byte_str[0]);
-            pt_buf[i] = 0x01 * hex_char_to_byte(byte_str[1]);
+            pt_buf[i] += 0x01 * hex_char_to_byte(byte_str[1]);
         }
     }
 
@@ -125,19 +125,19 @@ int main(int argc, char **argv) {
     //
 
     for (uintptr_t i = 0; i < len; ++i ) {
-		const uint8_t *scan_buf = (uint8_t *)((uintptr_t)buf + i);
-		bool found_pt = true;
-		for (uintptr_t h = 0; h < pt_len; ++h) {
-			if (!(pt_mask & ((uint64_t)1 << h)))
-				continue;
+	const uint8_t *scan_buf = (uint8_t *)((uintptr_t)buf + i);
+	bool found_pt = true;
+	for (uintptr_t h = 0; h < pt_len; ++h) {
+		if (!(pt_mask & ((uint64_t)1 << h)))
+			continue;
 
-			if (scan_buf[h] != pt_buf[h]) {
-				found_pt = 0;
-				break;
-			}
+		if (scan_buf[h] != pt_buf[h]) {
+			found_pt = 0;
+			break;
 		}
+	}
 
-		if (found_pt) {
+	if (found_pt) {
             printf("Found pattern[%u] at offset %p\n", results_found++, (void *)i);
             if (bytes_to_show > 0) {
                 puts("Bytes: ");
@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
                 puts("\n");
             }
         }
-	}
+    }
 
     end = clock();
     diff = (double)end - start;
